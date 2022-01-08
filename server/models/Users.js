@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     isMember: {
         type: Boolean,
         required: true,
+    },
+    transactions: {
+        type: Object,
+        required: false
     }
 });
 

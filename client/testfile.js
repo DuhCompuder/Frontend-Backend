@@ -20,3 +20,29 @@ function getPages() {
 }
 
 console.log(getPages())
+//// Transactions Push /////
+
+// {
+//     "filter": { "name": "May" },
+//     "update":{ "$push":{
+//         "transactions": 
+//             {
+//             "id": 2,
+//             "item": {
+//                 "name": "paper",
+//                 "price": 1.25
+//             },
+//             "total": 1.25
+//         } 
+//     }}
+// }
+
+// {
+//     "filter": { "name": "May" },
+//     "update": { "account": 240 }
+// }
+
+// {
+//     "filter": { "productName": "paper" },
+//     "update": { "quantityInStock": 3 }
+// }
