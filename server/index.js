@@ -14,8 +14,21 @@ app.use(cors())
 
 mongoose.connect(uri)
 
+app.get('/getOneUser', async (req, res) => {
+    console.log('getting one users request')
+    console.log(req.body)
+    const { filter } = req.body;
+    console.log('FIND: ', filter)
+    try {
+        const user = await UserModel.findOne(filter)
+        res.json(user)
+    } catch (err) {
+        res.send('Error ' + err)
+    }
+})
+
 app.get('/getUsers', async (req, res) => {
-    console.log('get request')
+    console.log('getting all users request')
     try {
         const user = await UserModel.find()
         res.json(user)
@@ -24,7 +37,7 @@ app.get('/getUsers', async (req, res) => {
     }
 })
 app.get('/getProducts', async (req, res) => {
-    console.log('get request')
+    console.log('getting all products request')
     try {
         const product = await ProductModel.find()
         res.json(product)
@@ -42,6 +55,7 @@ app.post('/setUser', async (req, res) => {
         isMember: req.body.isMember
     })
     try {
+        console.log('adding new user')
         const p1 = await product.save()
         res.json(p1)
     } catch (err) {
@@ -54,6 +68,7 @@ app.post('/updateUser', async (req, res) => {
     const { update } = req.body;
     const opts = { new: true, upsert: true };
     try {
+        console.log('update user info')
         const data = await UserModel.findOneAndUpdate(filter, update, opts)
         res.json(data)
     } catch (err) {
@@ -62,13 +77,13 @@ app.post('/updateUser', async (req, res) => {
 })
 
 app.post('/setProduct', async (req, res) => {
-    console.log('post request')
     const product = new ProductModel({
         productName: req.body.productName,
         price: req.body.price,
         quantityInStock: req.body.quantityInStock
     })
     try {
+        console.log('adding new product')
         const p1 = await product.save()
         res.json(p1)
     } catch (err) {
@@ -81,6 +96,7 @@ app.post('/updateProduct', async (req, res) => {
     const { update } = req.body;
     const opts = { new: true, upsert: true };
     try {
+        console.log('update product info')
         const data = await ProductModel.findOneAndUpdate(filter, update, opts)
         res.json(data)
     } catch (err) {

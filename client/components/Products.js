@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react'
+import  { updateItemQuantity, updateUserBalance, recordTransaction } from '../utils/querySchemas'
+import axios from 'axios'
 
-function Products({ login, products }) {
+
+function Products({ login, setLogin , products , fetchUsers, fetchProducts }) {
     const [perpage, setPerpage] = useState(null)
     const [viewpage, setViewpage] = useState(0)
     const [totalpages, setTotalpages] = useState(0)
     const [buywindow, setBuywindow] = useState(null)
 
     useEffect(()=>{
+        if (buywindow === 'NEW_BUY') {
+            fetchProducts()
+            fetchUsers()
+            setBuywindow('BUY_DONE')
+        }
         getPages()
-    },[products, viewpage])
+    },[products, viewpage, buywindow])
     async function getPages() {
         let queueProducts = products;
         let pagecount = 0;
@@ -40,6 +48,14 @@ function Products({ login, products }) {
                 break;
         }
     }
+    async function updateUserDetails(userName) {
+        console.log('update data for: ', userName)
+        const res = await axios.get('http://localhost:4000/getUsers' )
+        console.log('Updated data for: ', res.data)
+        let found = res.data.filter(user=> user.name === userName)
+        console.log('found: ', found)
+        setLogin(found[0])  
+    }
     function showWindow() {
         if(login) {
             switch(buywindow){
@@ -55,23 +71,38 @@ function Products({ login, products }) {
     }
 
     async function intiateBuy(item) {
-        //check user funds
-        //setBuywindow to NO_FUNDS if lacking funds && Exit Purchase function
-        if (login.account < item.price) {
-            setBuywindow('NO_FUNDS') 
-            return
-        } 
-        //setBuywindow to NO_STOCK if inventory empty && Exit Purchase function
-        if (item.quantityInStock < 1) {
-            setBuywindow('NO_STOCK') 
-            return
-        } 
-        //send post request UPDATE USER ACCOUNT && ADD new transaction info using passed in item object
-
-        //send post request UPDATE ITEM DATABASE
-
-        //setBuywindow to THANKS after successful purchase
-        setBuywindow('THANKS')
+        const test = {
+            user: null,
+            txn: null,
+            item: null
+        }
+        if (login) {
+            //check user funds
+            //setBuywindow to NO_FUNDS if lacking funds && Exit Purchase function
+            if (login.account < item.price) {
+                setBuywindow('NO_FUNDS') 
+                return
+            } 
+            //setBuywindow to NO_STOCK if inventory empty && Exit Purchase function
+            if (item.quantityInStock < 1) {
+                setBuywindow('NO_STOCK') 
+                return
+            } 
+            //send post request UPDATE USER ACCOUNT && ADD new transaction info using passed in item object
+            
+            let userCheck = updateUserBalance(login, item.price)
+            userCheck.status? test.user = await axios.post('http://localhost:4000/updateUser', userCheck.toSend): console.log(userCheck.message)
+            let txnCheck = recordTransaction(login, item)
+            txnCheck.status?  test.txn = await axios.post('http://localhost:4000/updateUser', txnCheck.toSend): console.log(txnCheck.message)
+            //send post request UPDATE ITEM DATABASE
+            let itemCheck = updateItemQuantity(item)
+            itemCheck.status? test.item = await axios.post('http://localhost:4000/updateProduct', itemCheck.toSend): console.log(itemCheck.message)
+            //setBuywindow to THANKS after successful purchase
+            setBuywindow('NEW_BUY')
+            updateUserDetails(login.name)
+        }
+        setBuywindow(true)
+        console.log(test)
     }
     return (
         <div className="relative w-screen flex flex-col items-center">

@@ -13,16 +13,16 @@ function Userdetails({login}) {
                 </div>
                 <div className="pt-8 w-96">
                     <h1 className="text-3xl border-b-2 border-gray-500">Transactions</h1>
-                    <div className="pt-4">
+                    <div className="pt-4 max-h-screen overflow-y-scroll">
                         <ul>
                             {
                                 login.transactions && login.transactions.map((txns, i)=>(
                                     <li key={i} className="p-2 m-2 border-2 bg-gray-300">
-                                        <div className="flex"><h1 className="font-bold">Transaction No. : </h1><p>{txns.id}</p></div>
-                                        <div className="flex"><h1 className="font-bold">Item Name : </h1><p>{txns.item.name}</p></div>
-                                        <div className="flex"><h1 className="font-bold">Item Price : </h1><p>{txns.item.price}</p></div>
-                                        <div className="flex"><h1 className="font-bold">Item Quantity Bought: </h1><p>{txns.item.quantity}</p></div>
-                                        <div className="flex"><h1 className="font-bold">Item Name : </h1><p>{txns.totalprice}</p></div>
+                                        <div className="flex space-x-2"><h1 className="font-bold">Transaction No. : </h1><p>{txns.id}</p></div>
+                                        <div className="flex space-x-2"><h1 className="font-bold">Item Name : </h1><p>{txns.item.name}</p></div>
+                                        <div className="flex space-x-2"><h1 className="font-bold">Item Price : </h1><p>{txns.item.price}</p></div>
+                                        <div className="flex space-x-2"><h1 className="font-bold">Item Quantity Bought: </h1><p>{txns.item.quantity}</p></div>
+                                        <div className="flex space-x-2"><h1 className="font-bold">Total Paid: </h1><p>{txns.totalprice}</p></div>
                                     </li>
                                 ))
                             }  
